@@ -1,4 +1,5 @@
 {
-	"name": "PTV Calendar Disruptions",
-	"version": "0.0.1"
+	"name": "ptv-calendar-disruptions",
+	"version": "0.0.1",
+	"dependencies": {}
 }

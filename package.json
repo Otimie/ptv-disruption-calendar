@@ -1,5 +1,14 @@
 {
 	"name": "ptv-calendar-disruptions",
 	"version": "0.0.1",
-	"dependencies": {}
+	"description": "",
+	"keywords": [
+		
+	],
+	"main": "index.js",
+	"repository": "anthropomorphized/ptv-calendar-disruptions",
+	"dependencies": {},
+	"engines": {
+		"node": "*"	
+	}
 }

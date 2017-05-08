@@ -1,20 +1,44 @@
 'use strict';
 
 const crypto = require('crypto');
+const https = require('https');
 
-function signApiRequest(pathname, userId = 1234567, apiKey = '00000000-0000-0000-0000-000000000000', domain = 'https://timetableapi.ptv.vic.gov.au') {
+function signedPath(unsignedPath, userId = 1234567, apiKey = '00000000-0000-0000-0000-000000000000') {
 
 	// Query string separator
-	pathname = pathname + (pathname.indexOf('?') ? '?' : '&');
-	var raw = pathname + 'devid=' + userId.toString();
+	var path = unsignedPath + (unsignedPath.indexOf('?') > -1 ? '&' : '?');
+	var raw = path + 'devid=' + userId.toString();
 
 	// Calculate signature
 	var hashed = crypto.createHmac('sha1', apiKey).update(raw);
 	var signature = hashed.digest('hex');
 
 	// Append signature to the URL
-	return domain + raw + '&signature=' + signature;
+	return raw + '&signature=' + signature;
 }
 
-// Print signed URL to standard output
-console.log(signApiRequest('/v3/disruptions'));
+https.get({
+	host: 'timetableapi.ptv.vic.gov.au',
+	path: signedPath('/v3/disruptions/route/9?disruption_status=planned')
+}, function (response) {
+
+	var body = '';
+
+	response.on('data', function (data) {
+		body += data;
+	});
+
+	response.on('end', function () {
+
+		if (response.statusCode === 200) {
+
+			var parsedBody = JSON.parse(body);
+
+			if (parsedBody.status.health === 1 && parsedBody.status.version === '3.0') {
+				console.log(parsedBody.disruptions);
+			}
+		}
+
+	});
+
+});

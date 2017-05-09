@@ -2,13 +2,16 @@
 	"name": "ptv-calendar-disruptions",
 	"version": "0.0.1",
 	"description": "",
-	"keywords": [
-		
-	],
 	"main": "index.js",
 	"repository": "anthropomorphized/ptv-calendar-disruptions",
+	"scripts": {
+		"test": "./node_modules/mocha/bin/mocha"
+	},
 	"dependencies": {},
+  	"devDependencies": {
+		"mocha": "3.3.0"
+	},
 	"engines": {
-		"node": "*"	
+		"node": "*"
 	}
 }

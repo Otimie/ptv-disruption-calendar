@@ -1,12 +1,13 @@
 language: node_js
 node_js:
-  - "6.10"
+- '6.10'
 deploy:
   provider: lambda
-  function_name: ""
-  region: "ap-southeast-2"
-  role: ""
-  runtime: "nodejs6.10"
-  handler_name: ""
-  access_key_id:
+  function_name: ptvCalendarDisruptions
+  region: ap-southeast-2
+  role: arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  runtime: nodejs6.10
+  handler_name: handler
+  access_key_id: AKIAJIUNG4AZPZ2PI4JA
   secret_access_key:
+    secure: bTWn1cCG5s8sUHA/Z7QuTxU+UbedT8kJCrU9iTG0+tzoJyXC9xr5GQVjBaylce8zqJdbuY3YD62IXX939InPx3iR39/9wqVCXiyE6afOetOKZrlEk173CYKM3cgdLkUrL7ANNDrekVm0ymyd2bWzDI+F4cKAIs00NDDehEm+dTkF5tqpnuZHdEuJSojrZWnnhiW9G3WPpVmx3v2WFWCCDVCN4eDbzr4c5hrvyNEY7+WD7HM7uirRokzXKx9FmofKz3zjve9teDpzTEb5e8JK4CGD/LPU/ICFxLt+UdDjt9NQhdkzn22twLu6PvaF1TFEprN3G37uTnl+2iinXhZS7V/Zhvy7FrQSEPnbg4NiqF/mSLQZgLqzSqsNhUGdeS5DNQeE/3QuSinvK9ZwEOg52/0rx4dpVEGeFlLgkgDHPKleEvO8zeV5K5cIgFFkX17vHYz5bPryNpIQ9rdKxJb/j/LaA1YmYl+SsRaooN7/fs0uBfALGAaUS+0FUTdAUQ5G12cleVbT2v5Bidiy4YLP3A87hKxsPjOvbSr44yptJF5SVTH90P5g00QX1csV++3amW0PLUo+jZdVqvRNmePSR4XSEqgXN+/jOC5tuosIkMa36276vcU8FbLgwHYStY/vrN5pkpYLE2pYo6qB4VCmIaQdS/Y4EsML1AGe+Ur5S8w=

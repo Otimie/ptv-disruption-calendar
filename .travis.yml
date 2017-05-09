@@ -1,3 +1,12 @@
 language: node_js
 node_js:
   - "6.10"
+deploy:
+  provider: lambda
+  function_name: ""
+  region: "ap-southeast-2"
+  role: ""
+  runtime: "nodejs6.10"
+  handler_name: ""
+  access_key_id:
+  secret_access_key:

@@ -5,7 +5,7 @@ deploy:
   provider: lambda
   function_name: ptvCalendarDisruptions
   region: ap-southeast-2
-  role: arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  role: arn:aws:iam::957721822995:role/travis-ci
   runtime: nodejs6.10
   handler_name: handler
   access_key_id: AKIAJIUNG4AZPZ2PI4JA

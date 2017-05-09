@@ -17,47 +17,53 @@ function signedPath(unsignedPath, userId = process.env.USER_ID, apiKey = process
 	return raw + '&signature=' + signature;
 }
 
-https.get({
-	host: 'timetableapi.ptv.vic.gov.au',
-	path: signedPath('/v3/disruptions/route/2')
-}, function (response) {
 
-	var body = '';
 
-	response.on('data', function (data) {
-		body += data;
-	});
+exports.handler = (event, context, callback) => {
 
-	response.on('end', function () {
+	https.get({
+		host: 'timetableapi.ptv.vic.gov.au',
+		path: signedPath('/v3/disruptions/route/2')
+	}, function (response) {
 
-		if (response.statusCode === 200) {
+		var body = '';
 
-			var parsedBody = JSON.parse(body);
+		response.on('data', function (data) {
+			body += data;
+		});
 
-			if (parsedBody.status.health === 1 && parsedBody.status.version === '3.0') {
+		response.on('end', function () {
 
-				process.stdout.write('BEGIN:VCALENDAR\r\n');
-				process.stdout.write('VERSION:2.0\r\n');
-				process.stdout.write('X-WR-CALNAME:Disruptions: Belgrave\r\n');
-				process.stdout.write('PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n');
+			if (response.statusCode === 200) {
 
-				parsedBody.disruptions.metro_train.forEach(function (element) {
+				var parsedBody = JSON.parse(body);
 
-					process.stdout.write('BEGIN:VEVENT\r\n');
-					process.stdout.write('SUMMARY:' + element.title + '\r\n');
-					process.stdout.write('UID:' + element.disruption_id + '\r\n');
-					process.stdout.write('DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n');
-					process.stdout.write('DTEND:' + element.to_date.replace(/[-:]/g,'') + '\r\n');
-					process.stdout.write('DESCRIPTION:' + element.description + '\r\n');
-					process.stdout.write('END:VEVENT' + '\r\n');
+				if (parsedBody.status.health === 1 && parsedBody.status.version === '3.0') {
 
-				});
+					process.stdout.write('BEGIN:VCALENDAR\r\n');
+					process.stdout.write('VERSION:2.0\r\n');
+					process.stdout.write('X-WR-CALNAME:Disruptions: Belgrave\r\n');
+					process.stdout.write('PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n');
 
-				process.stdout.write('END:VCALENDAR');
+					parsedBody.disruptions.metro_train.forEach(function (element) {
 
+						process.stdout.write('BEGIN:VEVENT\r\n');
+						process.stdout.write('SUMMARY:' + element.title + '\r\n');
+						process.stdout.write('UID:' + element.disruption_id + '\r\n');
+						process.stdout.write('DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n');
+						process.stdout.write('DTEND:' + element.to_date.replace(/[-:]/g,'') + '\r\n');
+						process.stdout.write('DESCRIPTION:' + element.description + '\r\n');
+						process.stdout.write('END:VEVENT' + '\r\n');
+
+					});
+
+					process.stdout.write('END:VCALENDAR');
+					callback(null, '');
+				}
 			}
-		}
+
+		});
 
 	});
 
-});
+};

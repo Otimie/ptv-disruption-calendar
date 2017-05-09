@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const https = require('https');
 
-function signedPath(unsignedPath, userId = 1234567, apiKey = '00000000-0000-0000-0000-000000000000') {
+function signedPath(unsignedPath, userId = process.env.USER_ID, apiKey = process.env.API_KEY) {
 
 	// Query string separator
 	var path = unsignedPath + (unsignedPath.indexOf('?') > -1 ? '&' : '?');

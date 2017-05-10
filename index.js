@@ -44,8 +44,8 @@ exports.handler = (event, context, callback) => {
 					
 					var calendarBody = 'BEGIN:VCALENDAR\r\n';
 					calendarBody += 'VERSION:2.0\r\n';
-					calendarBody += 'X-WR-CALNAME:Disruptions: Belgrave\r\n');
-					calendarBody += 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n');
+					calendarBody += 'X-WR-CALNAME:Disruptions: Belgrave\r\n';
+					calendarBody += 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n';
 
 					parsedBody.disruptions.metro_train.forEach(function (element) {
 

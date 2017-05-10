@@ -3,6 +3,8 @@
 const crypto = require('crypto');
 const https = require('https');
 
+const AWS = require('aws-sdk');
+
 function signedPath(unsignedPath, userId = process.env.USER_ID, apiKey = process.env.API_KEY) {
 
 	// Query string separator
@@ -35,35 +37,49 @@ exports.handler = (event, context, callback) => {
 		response.on('end', function () {
 
 			if (response.statusCode === 200) {
-
+				
 				var parsedBody = JSON.parse(body);
 
 				if (parsedBody.status.health === 1 && parsedBody.status.version === '3.0') {
-
-					process.stdout.write('BEGIN:VCALENDAR\r\n');
-					process.stdout.write('VERSION:2.0\r\n');
-					process.stdout.write('X-WR-CALNAME:Disruptions: Belgrave\r\n');
-					process.stdout.write('PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n');
+					
+					var calendarBody = 'BEGIN:VCALENDAR\r\n';
+					calendarBody += 'VERSION:2.0\r\n';
+					calendarBody += 'X-WR-CALNAME:Disruptions: Belgrave\r\n');
+					calendarBody += 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n');
 
 					parsedBody.disruptions.metro_train.forEach(function (element) {
 
-						process.stdout.write('BEGIN:VEVENT\r\n');
-						process.stdout.write('SUMMARY:' + element.title + '\r\n');
-						process.stdout.write('UID:' + element.disruption_id + '\r\n');
-						process.stdout.write('DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n');
-						process.stdout.write('DTEND:' + element.to_date.replace(/[-:]/g,'') + '\r\n');
-						process.stdout.write('DESCRIPTION:' + element.description + '\r\n');
-						process.stdout.write('END:VEVENT' + '\r\n');
+						calendarBody += 'BEGIN:VEVENT\r\n';
+						calendarBody += 'SUMMARY:' + element.title + '\r\n';
+						calendarBody += 'UID:' + element.disruption_id + '\r\n';
+						calendarBody += 'DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n';
+						calendarBody += 'DTEND:' + element.to_date.replace(/[-:]/g,'') + '\r\n';
+						calendarBody += 'DESCRIPTION:' + element.description + '\r\n';
+						calendarBody += 'END:VEVENT' + '\r\n';
 
 					});
 
-					process.stdout.write('END:VCALENDAR');
-					callback(null, '');
+					calendarBody += 'END:VCALENDAR';
+					
+					var s3 = new AWS.S3({apiVersion: '2006-03-01'});
+					
+					var params = {
+						Bucket: 'ptv-calendar-disruptions',
+						Key: '2',
+						Body: calendarBody
+					};
+					
+					s3.putObject(params, function(error, data) {
+						if (error) {
+							console.log(error, error.stack);
+						}
+						else {
+							console.log(data);
+							callback(null, 'Success');
+						}
+					});
 				}
 			}
-
 		});
-
 	});
-
 };

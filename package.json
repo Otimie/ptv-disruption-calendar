@@ -7,7 +7,9 @@
 	"scripts": {
 		"test": "./node_modules/mocha/bin/mocha"
 	},
-	"dependencies": {},
+	"dependencies": {
+	  "aws-sdk": "2.49.0"
+	},
   	"devDependencies": {
 		"mocha": "3.3.0"
 	},

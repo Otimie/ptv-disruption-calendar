@@ -1,30 +1,14 @@
 'use strict';
 
-const crypto = require('crypto');
 const https = require('https');
 
 const AWS = require('aws-sdk');
-
-function signedPath(unsignedPath, userId = process.env.USER_ID, apiKey = process.env.API_KEY) {
-
-	// Query string separator
-	var path = unsignedPath + (unsignedPath.indexOf('?') > -1 ? '&' : '?');
-	var raw = path + 'devid=' + userId;
-
-	// Calculate signature
-	var hashed = crypto.createHmac('sha1', apiKey).update(raw);
-	var signature = hashed.digest('hex');
-
-	// Append signature to the URL
-	return raw + '&signature=' + signature;
-}
-
 
 exports.handler = (event, context, callback) => {
 
 	https.get({
 		host: 'timetableapi.ptv.vic.gov.au',
-		path: signedPath('/v3/disruptions')
+		path: '/v3/disruptions?devid=3000140&signature=747706dffcb944fd7a1cfc79ebbb4b8b01472ba5'
 	}, function (response) {
 
 		var body = '';
@@ -92,10 +76,10 @@ exports.handler = (event, context, callback) => {
 						
 						var calendarBody = 'BEGIN:VCALENDAR\r\n';
 						calendarBody += 'VERSION:2.0\r\n';
-						calendarBody += 'X-WR-CALNAME:Disruptions: ' + disruptions[route].route_name + '\r\n';
-						calendarBody += 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n';
+						calendarBody += 'X-WR-CALNAME:Disruptions for ' + (disruptions[route].route_number ? disruptions[route].route_number + ' - ': '') + disruptions[route].route_name + '\r\n';
+						calendarBody += 'PRODID:-//ABC Corporation//NONSGML My Product//EN\r\n';
 						
-						disruptions[route].disruption.forEach(function (element) {
+						disruptions[route].disruptions.forEach(function (element) {
 							calendarBody += 'BEGIN:VEVENT\r\n';
 							calendarBody += 'SUMMARY:' + element.title + '\r\n';
 							calendarBody += 'UID:' + element.disruption_id + '\r\n';
@@ -107,6 +91,7 @@ exports.handler = (event, context, callback) => {
 							}
 							
 							calendarBody += 'DESCRIPTION:' + element.description + '\r\n';
+							calendarBody += 'URL:' + element.url + '\r\n';
 							calendarBody += 'END:VEVENT' + '\r\n';
 						});
 						
@@ -118,7 +103,7 @@ exports.handler = (event, context, callback) => {
 							Key: route,
 							Body: calendarBody
 						};
-						
+
 						s3.putObject(params, function(error, data) {
 							if (error) {
 								console.log(error, error.stack);
@@ -127,6 +112,7 @@ exports.handler = (event, context, callback) => {
 								console.log(data);
 							}
 						});
+
 						
 					}
 				}

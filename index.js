@@ -101,7 +101,8 @@ exports.handler = (event, context, callback) => {
 						var params = {
 							Bucket: 'ptv-calendar-disruptions',
 							Key: route,
-							Body: calendarBody
+							Body: calendarBody,
+							ContentType: 'text/calendar'
 						};
 
 						s3.putObject(params, function(error, data) {

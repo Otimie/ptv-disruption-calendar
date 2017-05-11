@@ -20,7 +20,6 @@ function signedPath(unsignedPath, userId = process.env.USER_ID, apiKey = process
 }
 
 
-
 exports.handler = (event, context, callback) => {
 
 	https.get({
@@ -47,9 +46,9 @@ exports.handler = (event, context, callback) => {
 					// For each route type, i.e. metro_train
 					for (var routeType in parsedBody.disruptions) {
 
-
 						parsedBody.disruptions[routeType].forEach(function (element) {
 
+							// If a disruption does not affect any routes we can disregard
 							if (element.routes.length > 0) {
 
 								var disruption = {
@@ -86,58 +85,54 @@ exports.handler = (event, context, callback) => {
 
 					}
 
-					console.log(disruptions);
-
-					for (var route in disruptions) {
-						disruptions[route];
-					}
-
-					/*
-					var calendarBody = 'BEGIN:VCALENDAR\r\n';
-					calendarBody += 'VERSION:2.0\r\n';
-					calendarBody += 'X-WR-CALNAME:Disruptions: Belgrave\r\n';
-					calendarBody += 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n';
-
-					parsedBody.disruptions.metro_train.forEach(function (element) {
-
-						calendarBody += 'BEGIN:VEVENT\r\n';
-						calendarBody += 'SUMMARY:' + element.title + '\r\n';
-						calendarBody += 'UID:' + element.disruption_id + '\r\n';
-						calendarBody += 'DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n';
-
-						// Disruptions might not always have a to_date, i.e. Current disruptions
-						if (element.to_date) {
-							calendarBody += 'DTEND:' + element.to_date.replace(/[-:]/g, '') + '\r\n';
-						}
-
-						calendarBody += 'DESCRIPTION:' + element.description + '\r\n';
-						calendarBody += 'END:VEVENT' + '\r\n';
-
-					});
-
-					calendarBody += 'END:VCALENDAR';
-					
+					// Specify the S3 API version
 					var s3 = new AWS.S3({apiVersion: '2006-03-01'});
 					
-					var params = {
-						Bucket: 'ptv-calendar-disruptions',
-						Key: '2',
-						Body: calendarBody
-					};
+					for (var route in disruptions) {
+						
+						var calendarBody = 'BEGIN:VCALENDAR\r\n';
+						calendarBody += 'VERSION:2.0\r\n';
+						calendarBody += 'X-WR-CALNAME:Disruptions: ' + disruptions[route].route_name + '\r\n';
+						calendarBody += 'PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n';
+						
+						disruptions[route].disruption.forEach(function (element) {
+							calendarBody += 'BEGIN:VEVENT\r\n';
+							calendarBody += 'SUMMARY:' + element.title + '\r\n';
+							calendarBody += 'UID:' + element.disruption_id + '\r\n';
+							calendarBody += 'DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n';
 
-					console.log(calendarBody);
-
-					
-					/*s3.putObject(params, function(error, data) {
-						if (error) {
-							console.log(error, error.stack);
-						}
-						else {
-							console.log(data);
-							callback(null, 'Success');
-						}
-					});
-					*/
+							// Disruptions might not always have a to_date, i.e. Current disruptions
+							if (element.to_date) {
+								calendarBody += 'DTEND:' + element.to_date.replace(/[-:]/g, '') + '\r\n';
+							}
+							
+							calendarBody += 'DESCRIPTION:' + element.description + '\r\n';
+							calendarBody += 'END:VEVENT' + '\r\n';
+						});
+						
+						
+						calendarBody += 'END:VCALENDAR';
+						
+						var params = {
+							Bucket: 'ptv-calendar-disruptions',
+							Key: route,
+							Body: calendarBody
+						};
+						
+						s3.putObject(params, function(error, data) {
+							if (error) {
+								console.log(error, error.stack);
+							}
+							else {
+								console.log(data);
+							}
+						});
+						
+					}
+				}
+				else {
+					var error = new Error('API Response was unsuccessfully validated');
+					callback(error);
 				}
 			}
 			else {
@@ -147,5 +142,3 @@ exports.handler = (event, context, callback) => {
 		});
 	});
 };
-
-exports.handler();

@@ -99,7 +99,7 @@ exports.handler = (event, context, callback) => {
 						calendarBody += 'END:VCALENDAR';
 						
 						var params = {
-							Bucket: 'ptv-calendar-disruptions',
+							Bucket: 'ptv-disruption-calendar',
 							Key: route,
 							Body: calendarBody,
 							ContentType: 'text/calendar'

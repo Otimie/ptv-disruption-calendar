@@ -75,6 +75,8 @@ exports.handler = (event, context, callback) => {
 						var calendarBody = 'BEGIN:VCALENDAR\r\n';
 						calendarBody += 'VERSION:2.0\r\n';
 						calendarBody += 'X-WR-CALNAME:Disruptions: ' + (disruptions[route].route_number ? disruptions[route].route_number + ' - ': '') + disruptions[route].route_name + '\r\n';
+						
+						// TODO: Update `PRODID`
 						calendarBody += 'PRODID:-//ABC Corporation//NONSGML My Product//EN\r\n';
 
 						disruptions[route].disruptions.forEach(function (element) {

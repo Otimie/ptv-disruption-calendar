@@ -3,7 +3,7 @@ node_js:
 - '6.10'
 deploy:
   provider: lambda
-  function_name: ptvCalendarDisruptions
+  function_name: ptvDisruptionCalendar
   region: ap-southeast-2
   role: arn:aws:iam::957721822995:role/travis-ci
   runtime: nodejs6.10

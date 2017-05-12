@@ -20,7 +20,7 @@ exports.handler = (event, context, callback) => {
 		response.on('end', function () {
 
 			if (response.statusCode === 200) {
-				
+
 				var parsedBody = JSON.parse(body);
 
 				if (parsedBody.status.health === 1 && parsedBody.status.version === '3.0') {
@@ -61,23 +61,22 @@ exports.handler = (event, context, callback) => {
 											disruptions: [disruption]
 										};
 									}
-
 								});
 							}
 						});
-
 					}
 
 					// Specify the S3 API version
 					var s3 = new AWS.S3({apiVersion: '2006-03-01'});
-					
+
 					for (var route in disruptions) {
-						
+
+						// TODO: Wrap lines that are too long as per the specification
 						var calendarBody = 'BEGIN:VCALENDAR\r\n';
 						calendarBody += 'VERSION:2.0\r\n';
 						calendarBody += 'X-WR-CALNAME:Disruptions: ' + (disruptions[route].route_number ? disruptions[route].route_number + ' - ': '') + disruptions[route].route_name + '\r\n';
 						calendarBody += 'PRODID:-//ABC Corporation//NONSGML My Product//EN\r\n';
-						
+
 						disruptions[route].disruptions.forEach(function (element) {
 							calendarBody += 'BEGIN:VEVENT\r\n';
 							calendarBody += 'SUMMARY:' + element.title + '\r\n';
@@ -88,33 +87,29 @@ exports.handler = (event, context, callback) => {
 							if (element.to_date) {
 								calendarBody += 'DTEND:' + element.to_date.replace(/[-:]/g, '') + '\r\n';
 							}
-							
+
 							calendarBody += 'DESCRIPTION:' + element.description + '\r\n';
 							calendarBody += 'URL:' + element.url + '\r\n';
 							calendarBody += 'END:VEVENT' + '\r\n';
 						});
-						
-						
+
 						calendarBody += 'END:VCALENDAR';
-						
+
 						var params = {
 							Bucket: 'ptv-disruption-calendar',
 							Key: route,
 							Body: calendarBody,
 							ContentType: 'text/calendar'
+							// TODO: Add `Expires` header to invalidate CloudFront cache after script is re-run
 						};
 
 						s3.putObject(params, function(error, data) {
 							if (error) {
 								console.log(error, error.stack);
 							}
-							else {
-								console.log(data);
-							}
 						});
-
-						
 					}
+					callback(null);
 				}
 				else {
 					var error = new Error('API Response was unsuccessfully validated');

@@ -99,7 +99,7 @@ exports.handler = (event, context, callback) => {
 
 						var params = {
 							Bucket: 'ptv-disruption-calendar',
-							Key: 'route/' + route,
+							Key: route,
 							Body: calendarBody,
 							ContentType: 'text/calendar'
 							// TODO: Add `Expires` header to invalidate CloudFront cache after script is re-run

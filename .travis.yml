@@ -7,6 +7,7 @@ deploy:
   region: ap-southeast-2
   role: arn:aws:iam::957721822995:role/travis-ci
   runtime: nodejs6.10
+  timeout: 30
   handler_name: handler
   access_key_id: AKIAJIUNG4AZPZ2PI4JA
   secret_access_key:

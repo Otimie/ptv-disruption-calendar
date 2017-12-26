@@ -108,7 +108,7 @@ exports.handler = (event, context, callback) => {
 
 						s3.putObject(params, function(error, data) {
 							if (error) {
-								console.log(error, error.stack);
+								callback(error);
 							}
 						});
 					}

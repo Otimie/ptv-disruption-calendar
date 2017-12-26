@@ -115,13 +115,11 @@ exports.handler = (event, context, callback) => {
 					callback(null);
 				}
 				else {
-					var error = new Error('API Response was unsuccessfully validated');
-					callback(error);
+					callback(new Error('API Response was unsuccessfully validated'));
 				}
 			}
 			else {
-				var error = new Error('Recieved unexpected status code from API call');
-				callback(error);
+				callback(new Error('Recieved unexpected status code from API call'));
 			}
 		});
 	});

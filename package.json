@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"repository": "anthropomorphized/ptv-calendar-disruptions",
 	"scripts": {
+		"pretest": "eslint .",
 		"test": "./node_modules/mocha/bin/mocha"
 	},
 	"dependencies": {

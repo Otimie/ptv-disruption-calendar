@@ -4,6 +4,8 @@ const https = require('https');
 
 const AWS = require('aws-sdk');
 
+const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
 exports.handler = (event, context, callback) => {
 
 	https.get({
@@ -65,9 +67,6 @@ exports.handler = (event, context, callback) => {
 							}
 						});
 					}
-
-					// Specify the S3 API version
-					var s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 					for (var route in disruptions) {
 

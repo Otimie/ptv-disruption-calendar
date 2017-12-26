@@ -11,15 +11,15 @@ exports.handler = (event, context, callback) => {
 	https.get({
 		host: 'timetableapi.ptv.vic.gov.au',
 		path: '/v3/disruptions?devid=3000140&signature=747706dffcb944fd7a1cfc79ebbb4b8b01472ba5'
-	}, function (response) {
+	}, (response) => {
 
 		var body = '';
 
-		response.on('data', function (data) {
+		response.on('data', (data) => {
 			body += data;
 		});
 
-		response.on('end', function () {
+		response.on('end', () => {
 
 			if (response.statusCode === 200) {
 
@@ -32,7 +32,7 @@ exports.handler = (event, context, callback) => {
 					// For each route type, i.e. metro_train
 					for (var routeType in parsedBody.disruptions) {
 
-						parsedBody.disruptions[routeType].forEach(function (element) {
+						parsedBody.disruptions[routeType].forEach((element) => {
 
 							// If a disruption does not affect any routes we can disregard
 							if (element.routes.length > 0) {
@@ -50,7 +50,7 @@ exports.handler = (event, context, callback) => {
 									to_date: element.to_date,
 								}
 
-								element.routes.forEach(function (element) {
+								element.routes.forEach((element) => {
 
 									if (element.route_id in disruptions) {
 										disruptions[element.route_id].disruptions.push(disruption);
@@ -78,7 +78,7 @@ exports.handler = (event, context, callback) => {
 						// TODO: Update `PRODID`
 						calendarBody += 'PRODID:-//ABC Corporation//NONSGML My Product//EN\r\n';
 
-						disruptions[route].disruptions.forEach(function (element) {
+						disruptions[route].disruptions.forEach((element) => {
 							calendarBody += 'BEGIN:VEVENT\r\n';
 							calendarBody += 'SUMMARY:' + element.title + '\r\n';
 							calendarBody += 'UID:' + element.disruption_id + '\r\n';
@@ -105,7 +105,7 @@ exports.handler = (event, context, callback) => {
 							// TODO: Add `Expires` header to invalidate CloudFront cache after script is re-run
 						};
 
-						s3.putObject(params, function(error, data) {
+						s3.putObject(params, (error, data) => {
 							if (error) {
 								callback(error);
 							}

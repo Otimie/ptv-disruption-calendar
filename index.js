@@ -105,7 +105,7 @@ exports.handler = (event, context, callback) => {
 							// TODO: Add `Expires` header to invalidate CloudFront cache after script is re-run
 						};
 
-						s3.putObject(params, (error, data) => {
+						s3.putObject(params, (error) => {
 							if (error) {
 								callback(error);
 							}

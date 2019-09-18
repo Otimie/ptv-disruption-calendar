@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-- '8.10'
+  - 10
 deploy:
   provider: lambda
   function_name: ptvDisruptionCalendar
   region: ap-southeast-2
   role: arn:aws:iam::957721822995:role/travis-ci
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   timeout: 30
   handler_name: handler
   access_key_id: AKIAJIUNG4AZPZ2PI4JA

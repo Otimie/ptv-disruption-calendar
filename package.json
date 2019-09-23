@@ -9,11 +9,11 @@
 		"test": "./node_modules/mocha/bin/mocha"
 	},
 	"dependencies": {
-		"aws-sdk": "2.440.0"
+		"aws-sdk": "2.529.0"
 	},
   	"devDependencies": {
-		"eslint": "5.16.0",
-		"mocha": "6.1.4"
+		"eslint": "6.4.0",
+		"mocha": "6.2.0"
 	},
 	"engines": {
 		"node": "*"

@@ -32,39 +32,40 @@ exports.handler = (event, context, callback) => {
 					// For each route type, i.e. metro_train
 					for (var routeType in parsedBody.disruptions) {
 
-						parsedBody.disruptions[routeType].forEach((element) => {
-
+						parsedBody.disruptions[routeType].filter((element) => {
+							
 							// If a disruption does not affect any routes we can disregard
-							if (element.routes.length > 0) {
+							return element.routes.length > 0;
+							
+						}).forEach((element) => {
 
-								var disruption = {
-									disruption_id: element.disruption_id,
-									title: element.title,
-									url: element.url,
-									description: element.description,
-									disruption_status: element.disruption_status,
-									disruption_type: element.disruption_type,
-									published_on: element.published_on,
-									last_updated: element.last_updated,
-									from_date: element.from_date,
-									to_date: element.to_date,
-								}
-
-								element.routes.forEach((element) => {
-
-									if (element.route_id in disruptions) {
-										disruptions[element.route_id].disruptions.push(disruption);
-									}
-									else {
-										disruptions[element.route_id] = {
-											route_id: element.route_id,
-											route_name: element.route_name,
-											route_number: element.route_number,
-											disruptions: [disruption]
-										};
-									}
-								});
+							var disruption = {
+								disruption_id: element.disruption_id,
+								title: element.title,
+								url: element.url,
+								description: element.description,
+								disruption_status: element.disruption_status,
+								disruption_type: element.disruption_type,
+								published_on: element.published_on,
+								last_updated: element.last_updated,
+								from_date: element.from_date,
+								to_date: element.to_date,
 							}
+
+							element.routes.forEach((element) => {
+
+								if (element.route_id in disruptions) {
+									disruptions[element.route_id].disruptions.push(disruption);
+								}
+								else {
+									disruptions[element.route_id] = {
+										route_id: element.route_id,
+										route_name: element.route_name,
+										route_number: element.route_number,
+										disruptions: [disruption]
+									};
+								}
+							});
 						});
 					}
 

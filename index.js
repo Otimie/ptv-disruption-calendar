@@ -6,6 +6,39 @@ const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
+/**
+ * @param   {Object} Disruption
+ * @returns {String} iCal formatted calendar entry
+ */
+function toICal(disruption) {
+	// TODO: Wrap lines that are too long as per the specification
+	var calendarBody = 'BEGIN:VCALENDAR\r\n';
+	calendarBody += 'VERSION:2.0\r\n';
+	calendarBody += 'X-WR-CALNAME:Disruptions: ' + (disruption.route_number ? disruption.route_number + ' - ': '') + disruption.route_name + '\r\n';
+
+	// TODO: Update `PRODID`
+	calendarBody += 'PRODID:-//ABC Corporation//NONSGML My Product//EN\r\n';
+
+	disruption.disruptions.forEach((element) => {
+		calendarBody += 'BEGIN:VEVENT\r\n';
+		calendarBody += 'SUMMARY:' + element.title + '\r\n';
+		calendarBody += 'UID:' + element.disruption_id + '\r\n';
+		calendarBody += 'DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n';
+
+		// Disruptions might not always have a to_date, i.e. Current disruptions
+		if (element.to_date) {
+			calendarBody += 'DTEND:' + element.to_date.replace(/[-:]/g, '') + '\r\n';
+		}
+
+		calendarBody += 'DESCRIPTION:' + element.description + '\r\n';
+		calendarBody += 'URL:' + element.url + '\r\n';
+		calendarBody += 'END:VEVENT' + '\r\n';
+	});
+
+	calendarBody += 'END:VCALENDAR';
+	return calendarBody;
+}
+
 exports.handler = (event, context, callback) => {
 
 	https.get({
@@ -70,31 +103,7 @@ exports.handler = (event, context, callback) => {
 
 					for (var route in disruptions) {
 
-						// TODO: Wrap lines that are too long as per the specification
-						var calendarBody = 'BEGIN:VCALENDAR\r\n';
-						calendarBody += 'VERSION:2.0\r\n';
-						calendarBody += 'X-WR-CALNAME:Disruptions: ' + (disruptions[route].route_number ? disruptions[route].route_number + ' - ': '') + disruptions[route].route_name + '\r\n';
-						
-						// TODO: Update `PRODID`
-						calendarBody += 'PRODID:-//ABC Corporation//NONSGML My Product//EN\r\n';
-
-						disruptions[route].disruptions.forEach((element) => {
-							calendarBody += 'BEGIN:VEVENT\r\n';
-							calendarBody += 'SUMMARY:' + element.title + '\r\n';
-							calendarBody += 'UID:' + element.disruption_id + '\r\n';
-							calendarBody += 'DTSTART:' + element.from_date.replace(/[-:]/g,'') + '\r\n';
-
-							// Disruptions might not always have a to_date, i.e. Current disruptions
-							if (element.to_date) {
-								calendarBody += 'DTEND:' + element.to_date.replace(/[-:]/g, '') + '\r\n';
-							}
-
-							calendarBody += 'DESCRIPTION:' + element.description + '\r\n';
-							calendarBody += 'URL:' + element.url + '\r\n';
-							calendarBody += 'END:VEVENT' + '\r\n';
-						});
-
-						calendarBody += 'END:VCALENDAR';
+						let calendarBody = toICal(disruptions[route]);
 
 						var params = {
 							Bucket: 'ptv-disruption-calendar',

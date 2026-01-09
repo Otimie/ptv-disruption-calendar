@@ -9,7 +9,7 @@
 		"test": "./node_modules/mocha/bin/mocha"
 	},
 	"dependencies": {
-		"aws-sdk": "2.778.0"
+		"aws-sdk": "2.1693.0"
 	},
   	"devDependencies": {
 		"eslint": "6.4.0",
